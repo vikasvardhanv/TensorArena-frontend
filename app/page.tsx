@@ -1,7 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Brain, Code2, Sparkles } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    const handleStartCoding = () => {
+        if (session) {
+            router.push("/arena");
+        } else {
+            router.push("/login");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
             {/* Hero Section */}
@@ -27,14 +42,14 @@ export default function Home() {
                         </p>
 
                         <div className="flex items-center justify-center space-x-4 pt-8">
-                            <Link
-                                href="/arena"
+                            <button
+                                onClick={handleStartCoding}
                                 className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 active:scale-95"
                             >
                                 Start Coding
                                 <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                            </Link>
+                            </button>
                             <Link
                                 href="/curriculum"
                                 className="px-8 py-4 rounded-full font-bold text-lg border border-gray-800 hover:bg-gray-900 transition-colors"
