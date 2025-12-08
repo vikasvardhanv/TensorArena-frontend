@@ -205,7 +205,7 @@ export async function submitSolution(questionId: string, code: string, output: s
         }
 
         // For now, mark as "passed" - you can add test case validation later
-        const attempt = await prisma.userQuestionAttempt.upsert({
+        await prisma.userQuestionAttempt.upsert({
             where: {
                 userId_questionId: {
                     userId: user.id,

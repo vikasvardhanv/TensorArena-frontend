@@ -257,7 +257,7 @@ export default function ArenaPage() {
                                 <div>
                                     <h2 className="text-2xl font-bold text-white mb-2">Ready to Code?</h2>
                                     <p className="text-gray-400">
-                                        Click "Start" to generate a <span className="text-blue-400 font-medium">{difficulty}</span> level <span className="text-blue-400 font-medium">{topic}</span> challenge.
+                                        Click &quot;Start&quot; to generate a <span className="text-blue-400 font-medium">{difficulty}</span> level <span className="text-blue-400 font-medium">{topic}</span> challenge.
                                     </p>
                                 </div>
                                 <button

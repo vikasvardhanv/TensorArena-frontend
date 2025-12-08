@@ -43,7 +43,7 @@ export default function SignupPage() {
             } else {
                 router.push("/arena");
             }
-        } catch (err: any) {
+        } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
             setError(err.message || "An error occurred");
         } finally {
             setLoading(false);

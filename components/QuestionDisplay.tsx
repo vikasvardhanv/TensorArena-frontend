@@ -56,7 +56,7 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                     </div>
                     <div className="flex items-start space-x-2">
                         <Code className="w-4 h-4 mt-0.5 text-blue-400 flex-shrink-0" />
-                        <p><strong>2. Test your code</strong> by clicking "Run Code" to see the output</p>
+                        <p><strong>2. Test your code</strong> by clicking &quot;Run Code&quot; to see the output</p>
                     </div>
                     <div className="flex items-start space-x-2">
                         <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-400 flex-shrink-0" />
@@ -66,7 +66,7 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 <div className="pt-2 border-t border-blue-500/20">
                     <p className="text-xs text-gray-400">
                         💡 <strong>Tip:</strong> The code template includes all necessary imports.
-                        You can run the code directly in your Python CLI or use the "Run Code" button.
+                        You can run the code directly in your Python CLI or use the &quot;Run Code&quot; button.
                     </p>
                 </div>
             </div>
@@ -81,9 +81,9 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 <h4 className="text-sm font-semibold text-gray-300 mb-2">What Happens When You Submit?</h4>
                 <ul className="text-sm text-gray-400 space-y-1 list-disc list-inside">
                     <li>Your code will be tested against multiple test cases</li>
-                    <li>You'll receive immediate feedback on correctness</li>
+                    <li>You&apos;ll receive immediate feedback on correctness</li>
                     <li>Performance metrics (time/space complexity) will be shown</li>
-                    <li>Hints will be provided if your solution doesn't pass</li>
+                    <li>Hints will be provided if your solution doesn&apos;t pass</li>
                 </ul>
             </div>
         </div>

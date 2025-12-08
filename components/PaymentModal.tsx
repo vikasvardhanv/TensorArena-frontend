@@ -32,7 +32,7 @@ export function PaymentModal({ isOpen, onClose, questionsUsed }: PaymentModalPro
                     <div>
                         <h2 className="text-2xl font-bold mb-2">Free Questions Exhausted</h2>
                         <p className="text-gray-400">
-                            You've used all {questionsUsed} free questions. Upgrade to Premium for unlimited access!
+                            You&apos;ve used all {questionsUsed} free questions. Upgrade to Premium for unlimited access!
                         </p>
                     </div>
 
