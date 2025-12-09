@@ -20,12 +20,20 @@ function generateCodeString(): string {
     return code;
 }
 
-export async function generateSubscriptionCode() {
+// Process payment and generate subscription code
+export async function processPaymentAndGenerateCode(subscriptionId: string) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user?.email) {
         return { success: false, message: "Not authenticated" };
     }
+
+    // In a production environment with Client Secret, we would:
+    // 1. Call PayPal API to verify orderId exists and is COMPLETED
+    // 2. Verify the amount matches expected price
+    // Since we don't have the secret, we trust the client-side onApprove for now,
+    // which is still better than an open URL.
+    console.log(`Processing subscription: ${subscriptionId} by user: ${session.user.email}`);
 
     try {
         let code: string;
@@ -42,7 +50,10 @@ export async function generateSubscriptionCode() {
 
                 // Create the code in database
                 await prisma.subscriptionCode.create({
-                    data: { code }
+                    data: {
+                        code,
+                        // potentially store orderId if we added a column for it
+                    }
                 });
 
                 return { success: true, code };

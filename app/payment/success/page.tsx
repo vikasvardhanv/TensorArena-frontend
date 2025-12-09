@@ -1,43 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle, Copy, Check } from "lucide-react";
-import { generateSubscriptionCode } from "@/app/actions/payment";
 
-export default function PaymentSuccessPage() {
-    const [code, setCode] = useState<string>("");
-    const [loading, setLoading] = useState(true);
+function SuccessContent() {
     const [copied, setCopied] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const code = searchParams.get("code");
 
     useEffect(() => {
-        const fetchCode = async () => {
-            const result = await generateSubscriptionCode();
-            if (result.success && result.code) {
-                setCode(result.code);
-            }
-            setLoading(false);
-        };
-        fetchCode();
-    }, []);
+        if (!code) {
+            // Redirect back to payment if no code is present
+            const timer = setTimeout(() => {
+                router.push("/payment");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [code, router]);
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(code);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (code) {
+            navigator.clipboard.writeText(code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
     };
 
-    if (loading) {
+    if (!code) {
         return (
             <div className="min-h-screen bg-black text-white flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-400">Generating your subscription code...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto"></div>
+                    <p className="mt-4 text-red-400">Invalid access. Redirecting...</p>
                 </div>
             </div>
         );
     }
+
+
 
     return (
         <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
@@ -94,5 +96,17 @@ export default function PaymentSuccessPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function PaymentSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+        }>
+            <SuccessContent />
+        </Suspense>
     );
 }

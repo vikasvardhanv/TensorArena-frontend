@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { redeemSubscriptionCode } from "../actions/payment";
+import { redeemSubscriptionCode, processPaymentAndGenerateCode } from "../actions/payment";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, DollarSign, Loader2, Key } from "lucide-react";
@@ -65,14 +65,50 @@ export default function PaymentPage() {
     return (
         <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
             <Script
-                src="https://www.paypal.com/sdk/js?client-id=BAA-mJbLY12BlALyY20NpIlxc5h3tLlX9QzgYR0t7H-dW3UvguBtymEzqiaGUv-7AJHYQFMtgrpcbCpdHc&components=hosted-buttons&disable-funding=venmo&currency=USD"
+                src="https://www.paypal.com/sdk/js?client-id=AdiUHvKx07wVXr33YRXPrAFxVD11UaYCQVOhfKUBmZwx5xo9Uj0sMEdok7eRBIPv4QxOFtU5aKNZOlR1&vault=true&intent=subscription"
                 strategy="afterInteractive"
+                data-sdk-integration-source="button-factory"
                 onLoad={() => {
-                    if (window.paypal && window.paypal.HostedButtons) {
+                    if (window.paypal) {
                         try {
-                            window.paypal.HostedButtons({
-                                hostedButtonId: "26M8LP77GNW7U"
-                            }).render("#paypal-container-26M8LP77GNW7U");
+                            window.paypal.Buttons({
+                                style: {
+                                    shape: 'pill',
+                                    color: 'blue',
+                                    layout: 'horizontal',
+                                    label: 'subscribe'
+                                },
+                                createSubscription: (data: any, actions: any) => {
+                                    return actions.subscription.create({
+                                        /* Creates the subscription */
+                                        plan_id: 'P-36J38125SY7265158NE3YEXA'
+                                    });
+                                },
+                                onApprove: async (data: any, actions: any) => {
+                                    try {
+                                        console.log("Subscription successful, ID:", data.subscriptionID);
+
+                                        setLoading(true);
+                                        // Call server action to generate code
+                                        const result = await processPaymentAndGenerateCode(data.subscriptionID);
+
+                                        if (result.success && result.code) {
+                                            router.push(`/payment/success?code=${result.code}`);
+                                        } else {
+                                            alert("Payment successful but failed to generate code. Please contact support.");
+                                            setLoading(false);
+                                        }
+                                    } catch (err) {
+                                        console.error("Payment processing error:", err);
+                                        alert("An error occurred while processing your payment.");
+                                        setLoading(false);
+                                    }
+                                },
+                                onError: (err: any) => {
+                                    console.error("PayPal error:", err);
+                                    alert("There was an error with PayPal.");
+                                }
+                            }).render("#paypal-button-container-P-36J38125SY7265158NE3YEXA");
                         } catch (error) {
                             console.error("PayPal button render error:", error);
                         }
@@ -88,9 +124,12 @@ export default function PaymentPage() {
                     <div className="mt-4 flex flex-col items-center justify-center space-y-1">
                         <div className="flex items-center space-x-2 text-lg">
                             <span className="text-gray-400">Get unlimited access to AI challenges</span>
-                            <span className="text-blue-500 font-bold">$19.99/month</span>
                         </div>
-                        <p className="text-xs text-red-400 font-medium">Payments are non-refundable</p>
+                        <div className="flex items-baseline space-x-2">
+                            <span className="text-gray-500 line-through text-lg">$29.99</span>
+                            <span className="text-blue-500 font-bold text-2xl">$19.99/month</span>
+                        </div>
+                        <p className="text-xs text-red-400 font-medium pt-2">Payments are non-refundable</p>
                     </div>
                 </div>
 
@@ -100,7 +139,7 @@ export default function PaymentPage() {
                         <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider">Payment Options</h3>
 
                         {/* PayPal Button Container */}
-                        <div id="paypal-container-26M8LP77GNW7U" className="w-full min-h-[45px]" style={{ display: 'block' }}></div>
+                        <div id="paypal-button-container-P-36J38125SY7265158NE3YEXA" className="w-full min-h-[45px]" style={{ display: 'block' }}></div>
 
                         <div className="relative flex py-2 items-center">
                             <div className="flex-grow border-t border-gray-800"></div>
