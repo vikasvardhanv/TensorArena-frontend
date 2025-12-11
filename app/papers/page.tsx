@@ -41,74 +41,78 @@ const papers = [
 
 export default function PapersPage() {
     return (
-        <div className="min-h-screen bg-[#f8f5f2] text-gray-900 font-serif selection:bg-orange-200">
-            {/* Header */}
-            <div className="border-b border-gray-200 bg-white">
-                <div className="container mx-auto px-6 py-6 flex items-center justify-between">
-                    <Link
-                        href="/"
-                        className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors font-sans text-sm"
-                    >
-                        <Home className="w-4 h-4" />
-                        <span>Home</span>
-                    </Link>
-                    <div className="font-bold text-xl tracking-tight">TensorArena<span className="text-gray-400 font-light italic ml-1">Research</span></div>
-                    <div className="w-16"></div> {/* Spacer */}
-                </div>
+        <div className="min-h-screen bg-black text-white selection:bg-cyan-500/30 font-sans">
+            {/* Background Grid */}
+            <div className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+                style={{
+                    backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
+                    backgroundSize: '40px 40px'
+                }}
+            />
+
+            {/* Simple Top Bar */}
+            <div className="container mx-auto px-6 py-6 border-b border-gray-800">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                >
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm">Return to Hub</span>
+                </Link>
             </div>
 
-            <div className="container mx-auto px-6 py-16">
+            <div className="container mx-auto px-6 py-16 relative z-10">
 
                 <div className="max-w-4xl mx-auto text-center mb-20">
-                    <div className="inline-block px-3 py-1 mb-6 border border-gray-300 rounded-full text-xs font-sans uppercase tracking-widest text-gray-500">
+                    <div className="inline-block px-3 py-1 mb-6 border border-cyan-500/30 bg-cyan-500/10 rounded-full text-xs font-bold uppercase tracking-widest text-cyan-400">
                         Paper Implementation Lab
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                        Don&apos;t just read the state of the art. <br />
-                        <span className="italic text-orange-600">Build it.</span>
+                    <h1 className="text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight">
+                        Don&apos;t just read research. <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">Build it from scratch.</span>
                     </h1>
-                    <p className="text-xl text-gray-600 leading-relaxed font-sans max-w-2xl mx-auto">
-                        Deep dive into seminal AI research papers. We provide the abstract and the blank IDE. You implement the core algorithms from scratch.
+                    <p className="text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto">
+                        Deep dive into seminal AI research papers. We provide the abstract and the blank IDE. You implement the core algorithms.
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {papers.map((paper, i) => (
-                        <div key={i} className="group bg-white p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 bg-gray-50 px-4 py-2 border-b border-l border-gray-100 rounded-bl-xl font-sans text-xs font-bold text-gray-400">
+                        <div key={i} className="group bg-gray-900/40 border border-gray-800 hover:border-cyan-500/50 p-8 rounded-2xl transition-all duration-300 relative overflow-hidden hover:bg-gray-900/60 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                            <div className="absolute top-0 right-0 bg-gray-800 px-4 py-2 border-b border-l border-gray-700 rounded-bl-xl text-xs font-mono font-bold text-gray-400 group-hover:text-cyan-400 transition-colors">
                                 {paper.year}
                             </div>
 
                             <div className="mb-4">
-                                <div className="flex gap-1 mb-2">
+                                <div className="flex gap-1 mb-3">
                                     {[...Array(paper.stars)].map((_, i) => (
-                                        <Star key={i} className="w-4 h-4 text-orange-400 fill-orange-400" />
+                                        <Star key={i} className="w-4 h-4 text-cyan-600 fill-cyan-900 group-hover:text-cyan-400 group-hover:fill-cyan-500/20 transition-all" />
                                     ))}
                                 </div>
-                                <h2 className="text-2xl font-bold mb-1 group-hover:text-orange-600 transition-colors leading-tight">
+                                <h2 className="text-2xl font-bold mb-2 group-hover:text-cyan-400 transition-colors leading-tight">
                                     {paper.title}
                                 </h2>
-                                <p className="text-sm text-gray-500 italic font-serif">
+                                <p className="text-sm text-gray-500 italic font-mono">
                                     {paper.authors}
                                 </p>
                             </div>
 
-                            <p className="text-gray-600 font-sans leading-relaxed mb-8 text-sm">
+                            <p className="text-gray-400 leading-relaxed mb-8 text-sm">
                                 {paper.desc}
                             </p>
 
                             <div className="flex items-center justify-between mt-auto">
-                                <span className={`px-3 py-1 rounded-full text-xs font-sans font-bold uppercase tracking-wide border ${paper.difficulty === 'Basis' ? 'bg-green-50 text-green-700 border-green-200' :
-                                    paper.difficulty === 'Intermediate' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                        'bg-purple-50 text-purple-700 border-purple-200'
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${paper.difficulty === 'Basic' ? 'bg-green-900/20 text-green-400 border-green-800' :
+                                    paper.difficulty === 'Intermediate' ? 'bg-blue-900/20 text-blue-400 border-blue-800' :
+                                        'bg-purple-900/20 text-purple-400 border-purple-800'
                                     }`}>
                                     {paper.difficulty}
                                 </span>
 
-                                <button className="flex items-center gap-2 text-sm font-sans font-bold text-gray-900 group-hover:text-orange-600 transition-colors">
+                                <Link href="/arena?mode=papers" className="flex items-center gap-2 text-sm font-bold text-white group-hover:gap-3 transition-all hover:text-cyan-400">
                                     <Code2 className="w-4 h-4" />
                                     Implement Paper &rarr;
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     ))}

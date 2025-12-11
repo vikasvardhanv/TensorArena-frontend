@@ -11,6 +11,22 @@ export interface Question {
     explanation?: string;
 }
 
+export type QuestionType = "multiple-choice" | "fill-in-blank" | "output-selection" | "coding";
+
+export interface RoleBasedQuestion {
+    id?: string;
+    title: string;
+    scenario: string;
+    type: QuestionType;
+    role: string;
+    options?: string[];
+    correctAnswer?: number | string;
+    explanation?: string;
+    codeSnippet?: string;
+    expectedOutput?: string;
+    blanks?: string[];
+}
+
 export const api = {
     generateQuestion: async (
         topic: string,
@@ -43,6 +59,34 @@ export const api = {
 
         if (!response.ok) {
             throw new Error("Failed to execute code");
+        }
+
+        return response.json();
+    },
+
+    generateRoleBasedQuestions: async (
+        role: string,
+        count: number = 3
+    ): Promise<RoleBasedQuestion[]> => {
+        const response = await fetch(`${API_BASE_URL}/generate_role_questions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ role, count }),
+        });
+
+        if (!response.ok) {
+            let errorMessage = "Failed to generate role-based questions";
+            try {
+                const errorData = await response.json();
+                if (errorData.detail) {
+                    errorMessage = errorData.detail;
+                }
+            } catch {
+                // If we can't parse the error, use the default message
+            }
+            throw new Error(errorMessage);
         }
 
         return response.json();

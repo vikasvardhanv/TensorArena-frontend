@@ -7,9 +7,8 @@ import { PaymentModal } from "@/components/PaymentModal";
 import { api, Question } from "@/lib/api";
 import { incrementQuestionUsage, checkQuestionLimit } from "@/app/actions/questions";
 import { saveQuestion, getUnseenQuestion, submitSolution, markQuestionAsSeen } from "@/app/actions/questionPersistence";
-import { Loader2, Play, RefreshCw, Send, ArrowLeft, Sparkles, LogOut, Code2 } from "lucide-react";
+import { Loader2, Play, RefreshCw, Send, Sparkles, LogOut, Code2 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
 
 export default function ArenaPage() {
     const { data: session } = useSession();
@@ -197,9 +196,6 @@ export default function ArenaPage() {
             {/* Header */}
             <header className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-gray-900/50 backdrop-blur">
                 <div className="flex items-center space-x-4">
-                    <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Link>
                     <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                         AI LeetCode Arena
                     </h1>

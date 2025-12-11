@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Code2, Network, Brain, MessageSquare, Clock, Building2, Zap, Play, Home } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 interface InterviewType {
     id: string;
@@ -63,8 +61,6 @@ const companies = [
 const difficulties = ["Easy", "Medium", "Hard"];
 
 export default function MockInterviewPage() {
-    const router = useRouter();
-    const { data: session } = useSession();
     const [selectedType, setSelectedType] = useState<string>("");
     const [selectedDifficulty, setSelectedDifficulty] = useState<string>("Medium");
     const [selectedCompany, setSelectedCompany] = useState<string>("");
@@ -123,26 +119,7 @@ export default function MockInterviewPage() {
         }
     };
 
-    const handleStartInterview = () => {
-        if (!session) {
-            router.push("/login");
-            return;
-        }
 
-        if (!selectedType) {
-            alert("Please select an interview type");
-            return;
-        }
-
-        const config = {
-            type: selectedType,
-            difficulty: selectedDifficulty,
-            company: selectedCompany || "General",
-            timed: timeLimit
-        };
-
-        alert(`Starting ${config.type} interview!\nDifficulty: ${config.difficulty}\nCompany: ${config.company}\nTimed: ${config.timed ? "Yes" : "No"}\n\nThis will be integrated with your AI backend.`);
-    };
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
@@ -155,7 +132,7 @@ export default function MockInterviewPage() {
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white transition-all mb-6"
                         >
                             <Home className="w-4 h-4" />
-                            Back to Home
+                            Return to Hub
                         </Link>
                         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
                             Mock Interview Practice
@@ -347,14 +324,13 @@ export default function MockInterviewPage() {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={handleStartInterview}
-                                disabled={!selectedType}
-                                className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                            <Link
+                                href="/arena?mode=interview"
+                                className={`w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 ${!selectedType ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                             >
                                 <Play className="w-5 h-5" />
                                 Start Interview
-                            </button>
+                            </Link>
 
                             <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                                 <div className="flex items-start gap-3">

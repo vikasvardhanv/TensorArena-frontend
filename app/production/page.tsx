@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Terminal, Activity, Home } from "lucide-react";
+import { Activity, Home } from "lucide-react";
 import Link from "next/link";
 
 const logs = [
@@ -44,28 +44,15 @@ export default function ProductionPage() {
 
     return (
         <div className="min-h-screen bg-[#0d1117] text-white font-mono selection:bg-green-500/30">
-            {/* Top Bar / Nav */}
-            <div className="border-b border-gray-800 bg-[#161b22] px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href="/"
-                        className="text-gray-400 hover:text-white transition-colors"
-                    >
-                        <Home className="w-5 h-5" />
-                    </Link>
-                    <div className="h-6 w-px bg-gray-700 mx-2" />
-                    <span className="font-bold text-green-500 flex items-center gap-2">
-                        <Terminal className="w-4 h-4" />
-                        PRODUCTION_ENV
-                    </span>
-                </div>
-                <div className="flex items-center gap-4 text-xs font-bold">
-                    <span className="flex items-center gap-1 text-green-400">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        SYSTEM_ONLINE
-                    </span>
-                    <span className="text-gray-500">REGION: US-EAST-1</span>
-                </div>
+            {/* Simple Top Bar */}
+            <div className="container mx-auto px-6 py-6">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                >
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm">Return to Hub</span>
+                </Link>
             </div>
 
             <div className="container mx-auto px-6 py-12">
@@ -101,12 +88,14 @@ export default function ProductionPage() {
                                         {scenario.severity}
                                     </span>
                                 </div>
-                                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                                <span className="text-gray-400 text-sm leading-relaxed mb-4">
                                     {scenario.desc}
-                                </p>
+                                </span>
                                 <div className="flex items-center gap-4 text-xs text-gray-500">
                                     <span className="bg-gray-800 px-2 py-1 rounded border border-gray-700">Type: {scenario.type}</span>
-                                    <span className="group-hover:translate-x-1 transition-transform text-green-500 font-bold">Initialize Environment &rarr;</span>
+                                    <Link href="/role-arena?source=production" className="group-hover:translate-x-1 transition-transform text-green-500 font-bold flex items-center gap-1">
+                                        Initialize Environment &rarr;
+                                    </Link>
                                 </div>
                             </div>
                         ))}

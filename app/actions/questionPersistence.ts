@@ -246,3 +246,166 @@ export async function submitSolution(questionId: string, code: string, output: s
         return { success: false, error: "Failed to submit solution" };
     }
 }
+
+// Role-based question persistence
+interface RoleBasedQuestionData {
+    title: string;
+    scenario: string;
+    type: string;
+    role: string;
+    options?: string[];
+    correctAnswer?: number | string;
+    explanation?: string;
+    codeSnippet?: string;
+    expectedOutput?: string;
+}
+
+export async function saveRoleBasedQuestion(questionData: RoleBasedQuestionData) {
+    try {
+        // Check if question already exists
+        const existing = await prisma.question.findFirst({
+            where: {
+                title: questionData.title,
+                topic: `role-based:${questionData.role}`,
+            },
+        });
+
+        if (existing) {
+            return { success: true, questionId: existing.id, isNew: false };
+        }
+
+        // Store role-based question using existing schema
+        // Use testCases array to store structured data as JSON strings
+        const structuredData = {
+            type: questionData.type,
+            options: questionData.options,
+            correctAnswer: questionData.correctAnswer,
+            codeSnippet: questionData.codeSnippet,
+            expectedOutput: questionData.expectedOutput,
+        };
+
+        const question = await prisma.question.create({
+            data: {
+                title: questionData.title,
+                description: questionData.scenario,
+                difficulty: "Intermediate", // Default for role-based
+                topic: `role-based:${questionData.role}`,
+                testCases: [JSON.stringify(structuredData)],
+                solutionTemplate: questionData.codeSnippet || "",
+                answer: String(questionData.correctAnswer || ""),
+                explanation: questionData.explanation,
+            },
+        });
+
+        return { success: true, questionId: question.id, isNew: true };
+    } catch (error) {
+        console.error("Error saving role-based question:", error);
+        return { success: false, error: "Failed to save question" };
+    }
+}
+
+export async function getUnseenRoleBasedQuestions(role: string, count: number = 3) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.email) {
+        return { success: false, error: "Not authenticated" };
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+        });
+
+        if (!user) {
+            return { success: false, error: "User not found" };
+        }
+
+        // Get unseen role-based questions
+        const unseenQuestions = await prisma.question.findMany({
+            where: {
+                topic: `role-based:${role}`,
+                attempts: {
+                    none: {
+                        userId: user.id,
+                    },
+                },
+            },
+            take: count,
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        if (unseenQuestions.length > 0) {
+            // Transform back to RoleBasedQuestion format
+            const questions = unseenQuestions.map(q => {
+                const structuredData = q.testCases[0] ? JSON.parse(q.testCases[0]) : {};
+                return {
+                    id: q.id,
+                    title: q.title,
+                    scenario: q.description,
+                    type: structuredData.type || "multiple-choice",
+                    role: role,
+                    options: structuredData.options,
+                    correctAnswer: q.answer ? (isNaN(Number(q.answer)) ? q.answer : Number(q.answer)) : undefined,
+                    explanation: q.explanation,
+                    codeSnippet: structuredData.codeSnippet,
+                    expectedOutput: structuredData.expectedOutput,
+                };
+            });
+
+            return { success: true, questions };
+        }
+
+        return { success: false, error: "No unseen questions available" };
+    } catch (error) {
+        console.error("Error getting unseen role-based questions:", error);
+        return { success: false, error: "Failed to get questions" };
+    }
+}
+
+export async function submitRoleBasedAnswer(questionId: string, answer: number | string) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.email) {
+        return { success: false, error: "Not authenticated" };
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+        });
+
+        if (!user) {
+            return { success: false, error: "User not found" };
+        }
+
+        // Record the attempt
+        await prisma.userQuestionAttempt.upsert({
+            where: {
+                userId_questionId: {
+                    userId: user.id,
+                    questionId: questionId,
+                },
+            },
+            update: {
+                code: String(answer),
+                status: "completed",
+                completedAt: new Date(),
+            },
+            create: {
+                userId: user.id,
+                questionId,
+                code: String(answer),
+                status: "completed",
+                completedAt: new Date(),
+            },
+        });
+
+        revalidatePath("/role-arena");
+        return { success: true };
+    } catch (error) {
+        console.error("Error submitting answer:", error);
+        return { success: false, error: "Failed to submit answer" };
+    }
+}

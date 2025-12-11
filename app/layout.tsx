@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ReactNode } from "react";
-import { GlobalHeader } from "@/components/GlobalHeader";
+
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -68,7 +68,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans min-h-screen flex flex-col">
         <Providers>
-          <GlobalHeader />
+
           <main className="flex-grow">
             {children}
           </main>

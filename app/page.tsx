@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Brain, Code2, Sparkles, Building2, GraduationCap, Network, ArrowDown } from "lucide-react";
+import { ArrowRight, Brain, Code2, Sparkles, GraduationCap, Network, ArrowDown, UserCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -84,32 +84,32 @@ export default function Home() {
                             icon: Code2,
                             title: "Real-World Production",
                             desc: "Beyond algorithms: Debug production outages, optimize inference latency, and bad deployments in a simulated environment.",
-                            link: "/production", // Updated link
+                            link: "/production",
                             delay: "100ms"
                         },
                         {
                             icon: Brain,
                             title: "Adaptive AI Mentor",
                             desc: "Your personal AI tutor that analyzes your code in real-time, pointing out logic gaps and suggesting optimizations.",
-                            link: "/arena",
+                            link: "/mentor",
                             delay: "200ms"
                         },
                         {
-                            icon: Building2,
-                            title: "Company Question Bank",
-                            desc: "The largest database of verified interview questions from Google, Meta, Anthropic, and OpenAI.",
+                            icon: GraduationCap,
+                            title: "Role-Based Learning Tracks",
+                            desc: "Scenario-based questions tailored to your role. Multiple choice, fill-in-the-blank, and output selection challenges for ML Engineers, Data Scientists, and more.",
                             link: "/tracks",
-                            delay: "300ms"
+                            delay: "350ms"
                         },
                         {
                             icon: Sparkles, // Use Sparkles or similar for "Novel/Research"
                             title: "Paper Implementations",
                             desc: "Don't just read papers—implement them. Build Transformers, Diffusion models, and MoE from scratch.",
                             link: "/papers", // Updated link
-                            delay: "400ms"
+                            delay: "450ms"
                         },
                         {
-                            icon: GraduationCap,
+                            icon: UserCheck,
                             title: "Mock Interview Studio",
                             desc: "Full-scale simulations of coding, behavioral, and system design interviews with AI grading.",
                             link: "/mock-interview",

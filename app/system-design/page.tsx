@@ -142,9 +142,9 @@ export default function SystemDesignPage() {
                                     ))}
                                 </div>
 
-                                <button className="flex items-center gap-2 text-sm font-bold text-white group-hover:gap-3 transition-all">
+                                <Link href="/arena?mode=system-design" className="flex items-center gap-2 text-sm font-bold text-white group-hover:gap-3 transition-all">
                                     Start Design Session <ArrowLeft className="w-4 h-4 rotate-180" />
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     ))}

@@ -186,10 +186,10 @@ export default function TracksPage() {
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white transition-all mb-6"
                     >
                         <Home className="w-4 h-4" />
-                        Back to Home
+                        Return to Hub
                     </Link>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
-                        Role-Based Learning Tracks
+                        Learning Tracks
                     </h1>
                     <p className="text-xl text-gray-400 max-w-3xl">
                         Specialized paths tailored for different AI/ML roles with company-specific preparation for FAANG/MAANG and top AI labs.
@@ -307,12 +307,33 @@ export default function TracksPage() {
                 {/* CTA */}
                 <div className="mt-20 text-center">
                     <h2 className="text-2xl font-bold mb-6">Ready to start your specialized track?</h2>
-                    <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-                        Head to the Arena to select your track, difficulty level, and optionally choose a company focus.
-                        Our AI will generate questions tailored to your selections.
+                    <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+                        Practice with realistic production scenarios tailored to specific AI/ML roles.
+                        Test your decision-making skills with multiple-choice questions, code output predictions,
+                        and fill-in-the-blank challenges based on real-world incidents.
                     </p>
+                    <div className="flex flex-wrap justify-center gap-3 mb-8">
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            Machine Learning Engineer
+                        </span>
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            Data Scientist
+                        </span>
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            Computer Vision Engineer
+                        </span>
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            NLP Engineer
+                        </span>
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            LLM Specialist
+                        </span>
+                        <span className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300">
+                            AI Product Manager
+                        </span>
+                    </div>
                     <Link
-                        href="/arena"
+                        href="/role-arena"
                         className="inline-flex items-center px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105"
                     >
                         <Zap className="w-5 h-5 mr-2" />
