@@ -7,11 +7,17 @@ import { PaymentModal } from "@/components/PaymentModal";
 import { api, Question } from "@/lib/api";
 import { incrementQuestionUsage, checkQuestionLimit } from "@/app/actions/questions";
 import { saveQuestion, getUnseenQuestion, submitSolution, markQuestionAsSeen } from "@/app/actions/questionPersistence";
-import { Loader2, Play, RefreshCw, Send, Sparkles, LogOut, Code2 } from "lucide-react";
+import { Loader2, Play, RefreshCw, Send, Sparkles, LogOut, Code2, ArrowLeft } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ArenaPage() {
     const { data: session } = useSession();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const mode = searchParams.get("mode");
+
     const [question, setQuestion] = useState<Question | null>(null);
     const [code, setCode] = useState<string>(`# Welcome to AI LeetCode Arena!
 # 
@@ -25,7 +31,20 @@ export default function ArenaPage() {
 # Your code will appear here once a question is loaded...
 `);
     const [loading, setLoading] = useState(false);
-    const [topic, setTopic] = useState("Python");
+
+    // Determine initial topic based on mode
+    const getInitialTopic = () => {
+        switch (mode) {
+            case "system-design": return "System Design";
+            case "production": return "Production Engineering";
+            case "papers": return "Paper Implementation";
+            case "mentor": return "Python"; // Mentor acts on any code
+            case "mock-interview": return "Algorithms"; // Default for interview
+            default: return "Python";
+        }
+    };
+
+    const [topic, setTopic] = useState(getInitialTopic());
     const [difficulty, setDifficulty] = useState("Basic");
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
@@ -67,46 +86,39 @@ export default function ArenaPage() {
             await loadQuestionStats();
 
             // First, try to get an unseen question from database
-            const unseenResult = await getUnseenQuestion(topic, difficulty);
+            // Only for standard modes where we might have pre-generated questions
+            // For special modes, we might want fresh generation or need to handle separately
+            let questionToUse: Question | null = null;
 
-            if (unseenResult.success && unseenResult.question) {
-                // Use existing question from database
-                setQuestion(unseenResult.question as Question);
-                setCode(unseenResult.question.solution_template);
-                setCurrentQuestionId(unseenResult.question.id);
+            // Check DB for standard topics
+            if (!["System Design", "Production Engineering", "Paper Implementation"].includes(topic)) {
+                const unseenResult = await getUnseenQuestion(topic, difficulty);
+                if (unseenResult.success && unseenResult.question) {
+                    questionToUse = unseenResult.question as Question;
+                    // Mark as seen
+                    await markQuestionAsSeen(unseenResult.question.id);
+                }
+            }
 
-                // Debug logging
-                console.log("Question loaded:", {
-                    hasAnswer: !!unseenResult.question.answer,
-                    hasExplanation: !!unseenResult.question.explanation,
-                    answer: unseenResult.question.answer?.substring(0, 50),
-                    explanation: unseenResult.question.explanation?.substring(0, 50)
-                });
-
-                // Mark as seen immediately so it won't appear again
-                await markQuestionAsSeen(unseenResult.question.id);
+            if (questionToUse) {
+                setQuestion(questionToUse);
+                setCode(questionToUse.solution_template);
+                setCurrentQuestionId(questionToUse.id || null);
             } else {
                 // Generate new question from AI
-                const newQuestion = await api.generateQuestion(topic, difficulty);
+                // Pass mode as user_context if relevant
+                const context = mode ? `User is in ${mode} mode. Focus on ${mode} related scenarios.` : undefined;
+
+                const newQuestion = await api.generateQuestion(topic, difficulty, context);
                 setQuestion(newQuestion);
                 setCode(newQuestion.solution_template);
-
-                // Debug logging
-                console.log("New question generated:", {
-                    hasAnswer: !!newQuestion.answer,
-                    hasExplanation: !!newQuestion.explanation,
-                    answer: newQuestion.answer?.substring(0, 50),
-                    explanation: newQuestion.explanation?.substring(0, 50)
-                });
+                setCurrentQuestionId(null); // New AI questions might not be instantly persisted via this flow unless changed
 
                 // Save to database
                 const saveResult = await saveQuestion(newQuestion);
                 if (saveResult.success && saveResult.questionId) {
                     setCurrentQuestionId(saveResult.questionId);
-                    // Mark as seen immediately
                     await markQuestionAsSeen(saveResult.questionId);
-                } else {
-                    setCurrentQuestionId(null);
                 }
             }
         } catch (error) {
@@ -196,8 +208,11 @@ export default function ArenaPage() {
             {/* Header */}
             <header className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-gray-900/50 backdrop-blur">
                 <div className="flex items-center space-x-4">
+                    <Link href="/" className="p-2 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Link>
                     <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        AI LeetCode Arena
+                        {mode ? mode.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + " Arena" : "AI LeetCode Arena"}
                     </h1>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -239,6 +254,9 @@ export default function ArenaPage() {
                         onChange={(e) => setTopic(e.target.value)}
                         className="bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                     >
+                        {mode === "system-design" && <option>System Design</option>}
+                        {mode === "production" && <option>Production Engineering</option>}
+                        {mode === "papers" && <option>Paper Implementation</option>}
                         <option>Python</option>
                         <option>Data Structures</option>
                         <option>Algorithms</option>
