@@ -12,9 +12,9 @@ export default function MockInterviewPage() {
     const handleStart = () => {
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/mock-interview");
-            return;
+        } else {
+            router.push("/arena?mode=mock-interview");
         }
-        router.push("/arena?mode=mock-interview");
     };
 
     return (

@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import { Suspense } from "react";
+import { InterviewPanel } from "@/components/InterviewPanel";
 
 function ArenaContent() {
     const { data: session } = useSession();
@@ -337,14 +338,18 @@ function ArenaContent() {
                             </div>
                         </div>
                     ) : question ? (
-                        <QuestionDisplay
-                            title={question.title}
-                            description={question.description}
-                            difficulty={question.difficulty}
-                            topic={question.topic}
-                            answer={question.answer}
-                            explanation={question.explanation}
-                        />
+                        mode === "mock-interview" ? (
+                            <InterviewPanel question={question} feedback={feedback} />
+                        ) : (
+                            <QuestionDisplay
+                                title={question.title}
+                                description={question.description}
+                                difficulty={question.difficulty}
+                                topic={question.topic}
+                                answer={question.answer}
+                                explanation={question.explanation}
+                            />
+                        )
                     ) : (
                         <div className="h-full flex items-center justify-center">
                             <div className="text-center space-y-6 max-w-md">

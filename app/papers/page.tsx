@@ -12,9 +12,9 @@ export default function PapersPage() {
     const handleStart = () => {
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/papers");
-            return;
+        } else {
+            router.push("/arena?mode=papers");
         }
-        router.push("/arena?mode=papers");
     };
 
     return (

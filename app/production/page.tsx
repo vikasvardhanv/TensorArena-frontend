@@ -12,9 +12,9 @@ export default function ProductionPage() {
     const handleStart = () => {
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/production");
-            return;
+        } else {
+            router.push("/arena?mode=production");
         }
-        router.push("/arena?mode=production");
     };
 
     return (

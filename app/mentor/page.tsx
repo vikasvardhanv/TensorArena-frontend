@@ -12,9 +12,9 @@ export default function MentorPage() {
     const handleStart = () => {
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/mentor");
-            return;
+        } else {
+            router.push("/arena?mode=mentor");
         }
-        router.push("/arena?mode=mentor");
     };
 
     return (
