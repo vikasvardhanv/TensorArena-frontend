@@ -46,7 +46,7 @@ export default function Home() {
                                 onClick={handleStartCoding}
                                 className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 active:scale-95"
                             >
-                                Start Coding
+                                Start Learning
                                 <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
                             </button>
@@ -82,9 +82,9 @@ export default function Home() {
                         },
                         {
                             icon: Code2,
-                            title: "Real-World Production",
-                            desc: "Beyond algorithms: Debug production outages, optimize inference latency, and bad deployments in a simulated environment.",
-                            link: "/production",
+                            title: "Adaptive Coding Arena",
+                            desc: "From Python basics to advanced GenAI agents, we generate the perfect challenge for your skill level.",
+                            link: "/arena",
                             delay: "100ms"
                         },
                         {

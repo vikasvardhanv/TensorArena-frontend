@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
-import { Briefcase, FlaskConical, LineChart, CheckCircle2, Building2, Trophy, Home, Zap } from "lucide-react";
+import { Briefcase, FlaskConical, LineChart, CheckCircle2, Building2, Trophy, Home, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useSession, signIn } from "next-auth/react";
 
 // Company tags for FAANG/MAANG
 
@@ -176,6 +179,29 @@ const DifficultyBadge = ({ level, companyType }: { level: string; companyType: s
 };
 
 export default function TracksPage() {
+    const { status } = useSession();
+
+    if (status === "loading") {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center text-white">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            </div>
+        );
+    }
+
+    // Auth Guard Removed to show content
+
+    const handleStart = () => {
+        if (status === "unauthenticated") {
+            signIn(undefined, { callbackUrl: "/role-arena" });
+        } else {
+            // Navigate via Next Link or Router, but Link component is below so we might need router
+            // However, the button in original code was wrapped in Link. 
+            // We need to change Link to button to handle click.
+            window.location.href = "/role-arena";
+        }
+    };
+
     return (
         <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
             <div className="container mx-auto px-6 py-12">
@@ -332,13 +358,16 @@ export default function TracksPage() {
                             AI Product Manager
                         </span>
                     </div>
-                    <Link
-                        href="/role-arena"
+                    <button
+                        onClick={handleStart}
                         className="inline-flex items-center px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105"
                     >
                         <Zap className="w-5 h-5 mr-2" />
                         Start Practicing Now
-                    </Link>
+                    </button>
+                    <p className="mt-4 text-sm text-gray-500">
+                        *Requires login to access the arena
+                    </p>
                 </div>
             </div>
         </div>

@@ -45,11 +45,11 @@ export default function SystemDesignPage() {
 
                     {/* Features */}
                     <div className="grid md:grid-cols-2 gap-6 mb-16">
-                        <div className="p-8 rounded-2xl bg-gray-900/20 border border-gray-800">
-                            <Server className="w-8 h-8 text-purple-400 mb-4" />
-                            <h3 className="text-xl font-bold mb-2">Distributed Training</h3>
+                        <Link href="/system-design/training" className="p-8 rounded-2xl bg-gray-900/20 border border-gray-800 hover:border-blue-500/50 transition-all cursor-pointer group">
+                            <Server className="w-8 h-8 text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
+                            <h3 className="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors">Distributed Training Simulator</h3>
                             <p className="text-gray-400">Design clusters for training LLMs across thousands of GPUs. Handle sharding, gradients, and fault tolerance.</p>
-                        </div>
+                        </Link>
                         <div className="p-8 rounded-2xl bg-gray-900/20 border border-gray-800">
                             <Shield className="w-8 h-8 text-green-400 mb-4" />
                             <h3 className="text-xl font-bold mb-2">Inference at Scale</h3>

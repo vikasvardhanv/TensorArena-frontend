@@ -67,6 +67,9 @@ export default function MentorPage() {
                             <Play className="w-5 h-5 fill-current" />
                             <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
                         </button>
+                        <p className="mt-4 text-sm text-gray-500">
+                            *Requires login to access the arena
+                        </p>
                     </div>
                 </div>
             </main>

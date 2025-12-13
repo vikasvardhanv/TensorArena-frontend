@@ -11,6 +11,8 @@ import {
     getUnseenRoleBasedQuestions,
     submitRoleBasedAnswer
 } from "@/app/actions/questionPersistence";
+import { incrementQuestionUsage } from "@/app/actions/questions";
+import { PaymentModal } from "@/components/PaymentModal";
 
 const roles = [
     "Machine Learning Engineer",
@@ -33,10 +35,23 @@ function RoleArenaContent() {
     const [questions, setQuestions] = useState<RoleBasedQuestion[]>([]);
     const [loading, setLoading] = useState(false);
     const [hintVisible, setHintVisible] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [usageStats, setUsageStats] = useState({ used: 0, subscribed: false });
 
     const startSession = async () => {
         setLoading(true);
         try {
+            // Check usage limit
+            const usageResult = await incrementQuestionUsage();
+            if (!usageResult.success) {
+                if (usageResult.requiresPayment) {
+                    setShowPaymentModal(true);
+                    setUsageStats({ used: 5, subscribed: false }); // Assume max used if limit hit
+                }
+                setLoading(false);
+                return;
+            }
+
             // First, try to get unseen questions from database
             const unseenResult = await getUnseenRoleBasedQuestions(role, 3);
 
@@ -127,6 +142,12 @@ function RoleArenaContent() {
     if (sessionState === 'intro') {
         return (
             <div className="max-w-2xl mx-auto text-center pt-20">
+                <PaymentModal
+                    isOpen={showPaymentModal}
+                    onClose={() => setShowPaymentModal(false)}
+                    questionsUsed={usageStats.used}
+                />
+
                 <div className="mb-8 flex justify-center">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                         <Brain className="w-10 h-10 text-white" />

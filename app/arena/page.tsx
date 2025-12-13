@@ -8,7 +8,7 @@ import { api, Question } from "@/lib/api";
 import { incrementQuestionUsage, checkQuestionLimit } from "@/app/actions/questions";
 import { saveQuestion, getUnseenQuestion, submitSolution, markQuestionAsSeen } from "@/app/actions/questionPersistence";
 import { Loader2, Play, RefreshCw, Send, Sparkles, LogOut, Code2, ArrowLeft } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -34,14 +34,16 @@ function ArenaContent() {
 `);
     const [loading, setLoading] = useState(false);
 
+    const [sessionState, setSessionState] = useState<'intro' | 'active'>(mode ? 'active' : 'intro');
+
     // Determine initial topic based on mode
     const getInitialTopic = () => {
         switch (mode) {
             case "system-design": return "System Design";
             case "production": return "Production Engineering";
             case "papers": return "Paper Implementation";
-            case "mentor": return "Python"; // Mentor acts on any code
-            case "mock-interview": return "Algorithms"; // Default for interview
+            case "mentor": return "Python";
+            case "mock-interview": return "Algorithms";
             default: return "Python";
         }
     };
@@ -238,9 +240,47 @@ function ArenaContent() {
     };
 
     useEffect(() => {
-        loadQuestionStats();
-        // Don't auto-generate on mount - wait for user to click
-    }, []);
+        if (mode) {
+            setSessionState('active'); // Force active for specific modes if needed, though initial state handles it
+        }
+    }, [mode]);
+
+    if (sessionState === 'intro') {
+        return (
+            <div className="h-screen w-full bg-black text-white flex flex-col items-center justify-center p-4">
+                <div className="max-w-3xl mx-auto text-center space-y-8 animate-fade-in-up">
+                    <div className="w-24 h-24 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Code2 className="w-12 h-12 text-blue-500" />
+                    </div>
+
+                    <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-br from-blue-400 to-white bg-clip-text text-transparent">
+                        Adaptive Coding Arena
+                    </h1>
+
+                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        From Python basics to advanced GenAI agents, we generate the perfect challenge for your skill level.
+                    </p>
+
+                    <button
+                        onClick={() => {
+                            if (!session) {
+                                signIn(undefined, { callbackUrl: "/arena" });
+                            } else {
+                                setSessionState('active');
+                            }
+                        }}
+                        className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto"
+                    >
+                        Start Challenge
+                        <Play className="w-5 h-5 fill-current" />
+                    </button>
+                    <p className="mt-4 text-sm text-gray-500">
+                        *Requires login to access the arena
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen w-full bg-black text-white flex flex-col overflow-hidden">

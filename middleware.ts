@@ -8,7 +8,6 @@ export default withAuth({
 
 export const config = {
     matcher: [
-        "/arena/:path*",
         "/payment/:path*"
     ],
 }
