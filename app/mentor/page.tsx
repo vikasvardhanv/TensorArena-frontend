@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Bot, Sparkles, BookOpen, Play } from "lucide-react";
 import Link from "next/link";
