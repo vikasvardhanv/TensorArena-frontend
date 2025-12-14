@@ -195,6 +195,9 @@ export interface CSVMetadata {
 export interface MLTrainingResult {
     metrics: {
         accuracy?: number;
+        mse?: number;
+        r2?: number;
+        mae?: number;
         classification_report?: string | Record<string, unknown>;
         confusion_matrix?: number[][];
         [key: string]: unknown;
@@ -203,6 +206,7 @@ export interface MLTrainingResult {
     visualization?: {
         features: string[];
         data: { x: number; y: number; label: string | number; prediction: string | number }[];
+        type?: "classification" | "regression";
     };
     error?: string;
     model_type?: string;

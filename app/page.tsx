@@ -41,24 +41,29 @@ export default function Home() {
                             challenge for your skill level.
                         </p>
 
-                        <div className="flex items-center justify-center space-x-4 pt-8">
-                            <button
-                                onClick={handleStartCoding}
-                                className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 active:scale-95"
-                            >
-                                Start Learning
-                                <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                            </button>
-                            <button
-                                onClick={() => {
-                                    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                                }}
-                                className="px-8 py-4 rounded-full font-bold text-lg border border-gray-800 hover:bg-gray-900 transition-colors flex items-center gap-2"
-                            >
-                                Explore Features
-                                <ArrowDown className="w-5 h-5" />
-                            </button>
+                        <div className="flex flex-col items-center justify-center space-y-4 pt-8">
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    onClick={handleStartCoding}
+                                    className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105 active:scale-95"
+                                >
+                                    Start Learning
+                                    <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className="px-8 py-4 rounded-full font-bold text-lg border border-gray-800 hover:bg-gray-900 transition-colors flex items-center gap-2"
+                                >
+                                    Explore Features
+                                    <ArrowDown className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm text-gray-500 font-medium bg-gray-900/50 px-4 py-2 rounded-full border border-gray-800">
+                                <span className="text-blue-400">✨ Free Plan:</span> Includes 5 complimentary interactions across all arenas.
+                            </p>
                         </div>
                     </div>
                 </div>

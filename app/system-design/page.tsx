@@ -68,7 +68,7 @@ export default function SystemDesignPage() {
                             <div className="absolute inset-0 rounded-full bg-white/20 blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
                         </button>
                         <p className="mt-4 text-sm text-gray-500">
-                            *Requires login to save progress (Optional)
+                            *Requires login to save progress
                         </p>
                     </div>
                 </div>

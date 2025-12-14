@@ -241,9 +241,15 @@ function ArenaContent() {
 
     useEffect(() => {
         if (mode) {
-            setSessionState('active'); // Force active for specific modes if needed, though initial state handles it
+            setSessionState('active');
         }
     }, [mode]);
+
+    useEffect(() => {
+        if (session) {
+            loadQuestionStats();
+        }
+    }, [session]);
 
     if (sessionState === 'intro') {
         return (
@@ -274,8 +280,8 @@ function ArenaContent() {
                         Start Challenge
                         <Play className="w-5 h-5 fill-current" />
                     </button>
-                    <p className="mt-4 text-sm text-gray-500">
-                        *Requires login to access the arena
+                    <p className="mt-4 text-sm text-gray-400 bg-gray-900/50 px-4 py-2 rounded-lg inline-block border border-gray-800">
+                        *Free account includes <span className="text-blue-400 font-bold">5 complimentary usage credits</span> across all arenas.
                     </p>
                 </div>
             </div>

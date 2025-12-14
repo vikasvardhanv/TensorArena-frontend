@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, Sparkles, User, RefreshCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { incrementQuestionUsage } from "@/app/actions/questions";
+import { PaymentModal } from "@/components/PaymentModal";
 
 interface Message {
     role: 'user' | 'model';
@@ -14,6 +16,34 @@ export default function MentorChat() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Usage tracking
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [usageStats, setUsageStats] = useState({ used: 0, subscribed: false });
+    const [sessionAllowed, setSessionAllowed] = useState(false);
+
+    useEffect(() => {
+        // Check limit on mount
+        const checkLimit = async () => {
+            const result = await incrementQuestionUsage();
+            if (!result.success && result.requiresPayment) {
+                setShowPaymentModal(true);
+                setUsageStats({ used: 5, subscribed: false }); // Assume max used if blocked
+            } else {
+                setSessionAllowed(true);
+                // Optional: You could fetch actual usage here if needed for display, 
+                // but incrementQuestionUsage returns it in result.questionsUsed
+                if (result.success) {
+                    setUsageStats({
+                        used: result.questionsUsed || 0,
+                        subscribed: false // We assume false if we are checking usage, but result doesn't explicitly return isSubscribed boolean in the same way always, checks logic
+                    });
+                }
+            }
+        };
+
+        checkLimit();
+    }, []);
 
     const suggestedTopics = [
         "Teach me Machine Learning",
@@ -30,6 +60,12 @@ export default function MentorChat() {
 
     const handleSend = async (text: string = input) => {
         if (!text.trim() || isLoading) return;
+
+        // Final gate check
+        if (!sessionAllowed) {
+            setShowPaymentModal(true);
+            return;
+        }
 
         const userMessage: Message = { role: 'user', parts: [text] };
         setMessages(prev => [...prev, userMessage]);
@@ -65,7 +101,7 @@ export default function MentorChat() {
     };
 
     return (
-        <div className="flex flex-col h-[600px] bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden shadow-2xl">
+        <div className="flex flex-col h-[600px] bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden shadow-2xl relative">
             {/* Header */}
             <div className="p-4 border-b border-gray-800 bg-gray-900/50 backdrop-blur flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400">
@@ -74,8 +110,8 @@ export default function MentorChat() {
                 <div>
                     <h3 className="font-bold text-white">Adaptive AI Mentor</h3>
                     <p className="text-xs text-gray-400 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        Online & Ready to Teach
+                        <span className={`w-2 h-2 rounded-full ${sessionAllowed ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+                        {sessionAllowed ? "Online & Ready to Teach" : "Limit Reached"}
                     </p>
                 </div>
             </div>
@@ -94,7 +130,12 @@ export default function MentorChat() {
                                 <button
                                     key={topic}
                                     onClick={() => handleSend(topic)}
-                                    className="p-3 text-sm text-left bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all hover:border-purple-500/50 text-gray-300 hover:text-white"
+                                    // Disable if session not allowed
+                                    disabled={!sessionAllowed}
+                                    className={`p-3 text-sm text-left bg-gray-800/50 border border-gray-700 rounded-xl transition-all ${sessionAllowed
+                                        ? "hover:bg-gray-800 hover:border-purple-500/50 text-gray-300 hover:text-white"
+                                        : "opacity-50 cursor-not-allowed"
+                                        }`}
                                 >
                                     {topic}
                                 </button>
@@ -111,8 +152,8 @@ export default function MentorChat() {
                             </div>
                         )}
                         <div className={`max-w-[80%] rounded-2xl p-4 ${msg.role === 'user'
-                                ? 'bg-purple-600 text-white rounded-br-none'
-                                : 'bg-gray-800/80 text-gray-200 rounded-bl-none border border-gray-700'
+                            ? 'bg-purple-600 text-white rounded-br-none'
+                            : 'bg-gray-800/80 text-gray-200 rounded-bl-none border border-gray-700'
                             }`}>
                             <div className="prose prose-invert prose-sm max-w-none">
                                 <ReactMarkdown>{msg.parts[0]}</ReactMarkdown>
@@ -148,19 +189,25 @@ export default function MentorChat() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Ask anything about AI..."
-                        className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-purple-500 focus:border-purple-500 rounded-xl"
-                        disabled={isLoading}
+                        placeholder={sessionAllowed ? "Ask anything about AI..." : "Usage limit reached."}
+                        className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-purple-500 focus:border-purple-500 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isLoading || !sessionAllowed}
                     />
                     <button
                         onClick={() => handleSend()}
-                        disabled={isLoading || !input.trim()}
+                        disabled={isLoading || !input.trim() || !sessionAllowed}
                         className="p-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white transition-colors"
                     >
                         {isLoading ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                     </button>
                 </div>
             </div>
+
+            <PaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)} // User can close modal but session remains disallowed
+                questionsUsed={usageStats.used}
+            />
         </div>
     );
 }
