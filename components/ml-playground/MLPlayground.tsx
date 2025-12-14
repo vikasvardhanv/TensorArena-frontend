@@ -408,7 +408,7 @@ export default function MLPlayground() {
                                                     {csvModel === 'svm' && "Support Vector Machines (SVM) find a hyperplane in an N-dimensional space that distinctly classifies the data points. Effective in high dimensional spaces."}
                                                     {csvModel === 'gradient_boosting' && "Gradient Boosting produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees. It builds keys sequentially to minimize errors."}
                                                     {csvModel === 'decision_tree' && "A Decision Tree determines the output by tracing the path from the root node to a leaf node using if-this-then-that logic learned from data features."}
-                                                    {csvModel === 'naive_bayes' && "Naive Bayes classifiers are a family of simple probabilistic classifiers based on applying Bayes' theorem with strong independence assumptions between the features."}
+                                                    {csvModel === 'naive_bayes' && "Naive Bayes classifiers are a family of simple probabilistic classifiers based on applying Bayes&apos; theorem with strong independence assumptions between the features."}
                                                     {csvModel === 'kmeans' && "K-Means is an unsupervised learning algorithm that partitions data into K distinct clusters based on feature similarity."}
                                                 </p>
                                             </div>
